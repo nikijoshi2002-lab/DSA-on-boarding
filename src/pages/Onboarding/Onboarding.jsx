@@ -84,6 +84,7 @@ const Onboarding = () => {
     udyamCertificateUpload: null,
     partnerUploads: [],
     payoutOption: 'A',
+    paymentMode: '',
     
     // Step 1: Banking
     bankName: '',
@@ -657,6 +658,10 @@ const Onboarding = () => {
 
   const handlePayoutSelection = (option) => {
     setFormData(prev => ({ ...prev, payoutOption: option }));
+  };
+
+  const handlePaymentModeSelection = (mode) => {
+    setFormData(prev => ({ ...prev, paymentMode: mode }));
   };
 
   const simulateVerificationRun = () => {
@@ -1804,6 +1809,32 @@ const Onboarding = () => {
                   <h3>{plan.label}</h3>
                   <p className="payout-rate">{plan.rate}</p>
                   <p className="text-sm">{plan.description}</p>
+                </div>
+              ))}
+            </div>
+
+            <h3 className="section-subheading mt-6 mb-4">Payment Mode</h3>
+            <div className="payout-grid">
+              {[
+                {
+                  mode: 'qr',
+                  label: 'QR Scan',
+                  description: 'Scan the QR code to complete the payment'
+                },
+                {
+                  mode: 'sms',
+                  label: 'Pay via SMS',
+                  description: 'Receive payment prompt on your registered mobile number'
+                }
+              ].map((paymentOption) => (
+                <div
+                  key={paymentOption.mode}
+                  className={`payout-card glass-panel ${formData.paymentMode === paymentOption.mode ? 'selected' : ''}`}
+                  onClick={() => handlePaymentModeSelection(paymentOption.mode)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <h3>{paymentOption.label}</h3>
+                  <p className="text-sm">{paymentOption.description}</p>
                 </div>
               ))}
             </div>

@@ -468,7 +468,7 @@ const ReviewQueue = () => {
 
             <div className="glass-panel review-section full-width">
               <h3>Payout Details & Checks</h3>
-              <div className="detail-row"><span>Requested Payout:</span> <strong>{documentUploads.payoutOption === 'B' ? '1.75% (Premium)' : documentUploads.payoutOption === 'A' ? '1.50% (Standard)' : 'N/A'}</strong></div>
+              <div className="detail-row"><span>Requested Payout:</span> <strong>{documentUploads.payoutOption === 'sms' ? 'Pay via SMS' : documentUploads.payoutOption === 'qr' ? 'QR Scan' : 'N/A'}</strong></div>
               <div className="detail-row"><span>BRE Rules:</span> <strong className="text-success">Passed</strong></div>
               <div className="detail-row"><span>Dedupe Check:</span> <strong className="text-success">Clear</strong></div>
             </div>
