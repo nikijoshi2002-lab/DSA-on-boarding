@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Loader2, CheckCircle, FileText, Smartphone } from 'lucide-react';
+import QRCode from 'qrcode';
 import './Onboarding.css';
 
 const STEPS = [
@@ -36,6 +37,36 @@ const INDIAN_STATES = [
   'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana',
   'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
 ];
+
+// QR Code Component
+const QRCodeDisplay = ({ email }) => {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      const qrValue = `https://payment.isfc.com/qr/${email || 'user'}`;
+      QRCode.toCanvas(canvasRef.current, qrValue, {
+        width: 256,
+        margin: 1,
+        color: {
+          dark: '#000',
+          light: '#fff'
+        }
+      });
+    }
+  }, [email]);
+
+  return (
+    <div className="qr-code-container glass-panel p-4 mt-6 text-center">
+      <h3 className="mb-4">Scan QR Code to Pay</h3>
+      <div className="qr-code-wrapper">
+        <canvas ref={canvasRef}></canvas>
+      </div>
+      <p className="text-sm mt-4 text-muted">Please scan this QR code with your preferred payment app</p>
+    </div>
+  );
+};
+
 
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -85,6 +116,9 @@ const Onboarding = () => {
     partnerUploads: [],
     payoutOption: 'A',
     paymentMode: '',
+    paymentPhoneNumber: '',
+    paymentOtpSent: false,
+    paymentOtp: '',
     
     // Step 1: Banking
     bankName: '',
@@ -661,7 +695,23 @@ const Onboarding = () => {
   };
 
   const handlePaymentModeSelection = (mode) => {
-    setFormData(prev => ({ ...prev, paymentMode: mode }));
+    setFormData(prev => ({ 
+      ...prev, 
+      paymentMode: mode,
+      paymentPhoneNumber: '',
+      paymentOtpSent: false,
+      paymentOtp: ''
+    }));
+  };
+
+  const handleSendOtp = () => {
+    if (!formData.paymentPhoneNumber || formData.paymentPhoneNumber.length < 10) {
+      alert('Please enter a valid phone number');
+      return;
+    }
+    // Simulate sending OTP
+    setFormData(prev => ({ ...prev, paymentOtpSent: true }));
+    alert(`OTP sent to ${formData.paymentPhoneNumber}`);
   };
 
   const simulateVerificationRun = () => {
@@ -1838,6 +1888,61 @@ const Onboarding = () => {
                 </div>
               ))}
             </div>
+
+            {/* QR Code Display */}
+            {formData.paymentMode === 'qr' && (
+              <QRCodeDisplay email={formData.email} />
+            )}
+
+            {/* SMS OTP Form */}
+            {formData.paymentMode === 'sms' && (
+              <div className="sms-otp-container glass-panel p-4 mt-6">
+                <h3 className="mb-4">Send OTP via SMS</h3>
+                <div className="input-group">
+                  <label>Phone Number</label>
+                  <input
+                    type="tel"
+                    placeholder="Enter your 10-digit phone number"
+                    value={formData.paymentPhoneNumber}
+                    onChange={(e) => setFormData(prev => ({ 
+                      ...prev, 
+                      paymentPhoneNumber: e.target.value.replace(/\D/g, '').slice(0, 10)
+                    }))}
+                    maxLength="10"
+                    disabled={formData.paymentOtpSent}
+                  />
+                </div>
+                
+                {!formData.paymentOtpSent ? (
+                  <button 
+                    className="btn btn-primary mt-4"
+                    onClick={handleSendOtp}
+                  >
+                    Send OTP
+                  </button>
+                ) : (
+                  <div className="input-group mt-4">
+                    <label>Enter OTP</label>
+                    <input
+                      type="text"
+                      placeholder="Enter the 6-digit OTP"
+                      value={formData.paymentOtp}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        paymentOtp: e.target.value.replace(/\D/g, '').slice(0, 6)
+                      }))}
+                      maxLength="6"
+                    />
+                    <button 
+                      className="btn btn-success mt-2"
+                      onClick={() => alert('OTP verified successfully!')}
+                    >
+                      Verify OTP
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
             
             <h3 className="section-subheading mt-6 mb-4">Stamp Duty Collection</h3>
             <div className="input-group w-50">

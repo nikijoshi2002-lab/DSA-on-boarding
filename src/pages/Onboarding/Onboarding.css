@@ -337,6 +337,47 @@
   line-height: 1.1;
 }
 
+.qr-code-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  background: rgba(29, 78, 216, 0.02);
+  padding: 2rem !important;
+}
+
+.qr-code-wrapper {
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.sms-otp-container {
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  max-width: 500px;
+  background: rgba(29, 78, 216, 0.01);
+}
+
+.sms-otp-container .input-group {
+  margin-bottom: 1rem;
+}
+
+.sms-otp-container input {
+  padding: 0.75rem;
+  font-size: 1rem;
+  letter-spacing: 2px;
+}
+
+.sms-otp-container input[type="text"] {
+  font-size: 1.25rem;
+  letter-spacing: 4px;
+  font-weight: 600;
+}
+
 .esign-container {
   padding: 2rem;
   max-width: 600px;
